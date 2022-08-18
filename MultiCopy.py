@@ -1,4 +1,3 @@
-# helloworld.py
 import pathlib
 import tkinter as tk
 import tkinter.ttk as ttk
@@ -15,17 +14,13 @@ class MultiCopy:
     filename = None
    
     def __init__(self, master=None):
-        # 1: Create a builder and setup resources path (if you have images)
         self.builder = builder = pygubu.Builder()
         builder.add_resource_path(PROJECT_PATH)
 
-        # 2: Load an ui file
         builder.add_from_file(PROJECT_UI)
 
-        # 3: Create the mainwindow
         self.mainwindow = builder.get_object('toplevel1', master)
 
-        # 4: Connect callbacks
         builder.connect_callbacks(self)
 
     def run(self):
@@ -36,8 +31,6 @@ class MultiCopy:
         self.filename = fd.askopenfilename(title='Select a file to copy')
         if self.filename: 
             self.dirpath = os.path.dirname(self.filename)
-            print(self.dirpath)
-            print(self.filename)
             self.builder.tkvariables['file_status_msg'].set("OK")
     
     def make_copy(self):
