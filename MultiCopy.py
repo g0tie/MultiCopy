@@ -44,31 +44,23 @@ class MultiCopy:
                     filename_suffix =  '_{0}{1}'.format(i,os.path.splitext(self.filename)[1])
                     shutil.copy2(self.filename, filename_prefix + filename_suffix)
 
-                self.setDialog(True)
-
+                messagebox.showinfo("Operation Done","Success !")
             except:
-                self.setDialog(False, 'Unexpected error while copying file. Please report to developper')
+                messagebox.showerror("Error",  'Unexpected error while copying file. Please report')
 
     def checkConditions(self):
-
         copy_number = self.builder.tkvariables['copy_number'].get()
 
         if not copy_number.isnumeric() or int( copy_number ) < 1:
-            self.setDialog(False, 'Copy number must be a valid number superior to 0')
+            messagebox.showerror("Error", 'Copy number must be a valid number superior to 0')
             return False
 
         if not self.filename:
-            self.setDialog(False, 'Please select a file')
+            messagebox.showerror("Error", 'Please select a file')
             return False
 
         return True
     
-    def setDialog(self, success, msg = None):
-        if not success:
-            messagebox.showerror("Error", msg)
-        else:
-            messagebox.showinfo("Operation Done","Success !")
-
 if __name__ == '__main__':
     app = MultiCopy()
     app.run()
