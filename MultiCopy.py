@@ -44,10 +44,10 @@ class MultiCopy:
                     filename_suffix =  '_{0}{1}'.format(i,os.path.splitext(self.filename)[1])
                     shutil.copy2(self.filename, filename_prefix + filename_suffix)
 
-                self.setDialog(True, 'Unexpected error while copying file. Please report to developper')
+                self.setDialog(True)
 
             except:
-                self.setDialog(False)
+                self.setDialog(False, 'Unexpected error while copying file. Please report to developper')
 
     def checkConditions(self):
 
