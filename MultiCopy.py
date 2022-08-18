@@ -1,0 +1,81 @@
+# helloworld.py
+import pathlib
+import tkinter as tk
+import tkinter.ttk as ttk
+import pygubu
+from tkinter import filedialog as fd
+from tkinter import messagebox
+import shutil
+import os
+
+PROJECT_PATH = pathlib.Path(__file__).parent
+PROJECT_UI = PROJECT_PATH / "multiCopy.ui"
+
+class MultiCopy:
+    filename = None
+   
+    def __init__(self, master=None):
+        # 1: Create a builder and setup resources path (if you have images)
+        self.builder = builder = pygubu.Builder()
+        builder.add_resource_path(PROJECT_PATH)
+
+        # 2: Load an ui file
+        builder.add_from_file(PROJECT_UI)
+
+        # 3: Create the mainwindow
+        self.mainwindow = builder.get_object('toplevel1', master)
+
+        # 4: Connect callbacks
+        builder.connect_callbacks(self)
+
+    def run(self):
+        self.mainwindow.mainloop()
+
+    
+    def select_file(self):
+        self.filename = fd.askopenfilename(title='Select a file to copy')
+        if self.filename: 
+            self.dirpath = os.path.dirname(self.filename)
+            print(self.dirpath)
+            print(self.filename)
+            self.builder.tkvariables['file_status_msg'].set("OK")
+    
+    def make_copy(self):
+        if self.checkConditions():
+            try:
+                copy_number = int( self.builder.tkvariables['copy_number'].get() )
+                filesname = self.builder.tkvariables['filesname'].get() or 'copy_'
+                filename_prefix = self.dirpath + '/' + filesname
+
+                for i in range(copy_number):
+                    filename_suffix =  '_{0}{1}'.format(i,os.path.splitext(self.filename)[1])
+                    shutil.copy2(self.filename, filename_prefix + filename_suffix)
+
+                self.setDialog(True, 'Unexpected error while copying file. Please report to developper')
+
+            except:
+                self.setDialog(False)
+
+    def checkConditions(self):
+
+        copy_number = self.builder.tkvariables['copy_number'].get()
+
+        if not copy_number.isnumeric() or int( copy_number ) < 1:
+            self.setDialog(False, 'Copy number must be a valid number superior to 0')
+            return False
+
+        if not self.filename:
+            self.setDialog(False, 'Please select a file')
+            return False
+
+        return True
+    
+    def setDialog(self, success, msg = None):
+        if not success:
+            messagebox.showerror("Error", msg)
+        else:
+            messagebox.showinfo("Operation Done","Success !")
+
+if __name__ == '__main__':
+    app = MultiCopy()
+    app.run()
